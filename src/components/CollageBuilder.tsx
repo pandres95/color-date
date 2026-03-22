@@ -2,19 +2,27 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { clearSharedImages, getSharedImages } from '../utils/idb';
 import type { CropData } from './CropAdjust';
+import type { ChallengeData } from './MainMenu';
 
 export function CollageBuilder() {
   const navigate = useNavigate();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [collageUrl, setCollageUrl] = useState<string | null>(null);
   const [isBuilding, setIsBuilding] = useState(true);
+  const [extractedHues, setExtractedHues] = useState<string[]>([]);
+  const [challenge, setChallenge] = useState<ChallengeData | null>(null);
 
   useEffect(() => {
     async function build() {
       try {
         const files = await getSharedImages();
         const cropDataRaw = sessionStorage.getItem('cropData');
+        const challengeRaw = localStorage.getItem('colorDate_challenge');
         
+        if (challengeRaw) {
+          setChallenge(JSON.parse(challengeRaw));
+        }
+
         if (!files.length || !cropDataRaw) {
           navigate('/');
           return;
@@ -45,10 +53,23 @@ export function CollageBuilder() {
         canvas.height = CANVAS_SIZE;
         const ctx = canvas.getContext('2d')!;
 
-        ctx.fillStyle = '#09090b'; 
+        ctx.fillStyle = '#ffffff'; 
         ctx.fillRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
 
+        const tempCanvas = document.createElement('canvas');
+        tempCanvas.width = 1;
+        tempCanvas.height = 1;
+        const tCtx = tempCanvas.getContext('2d');
+        const hues: string[] = [];
+
         loadedImages.forEach((item, i) => {
+          // Extract average hue
+          if (tCtx) {
+            tCtx.drawImage(item.img, 0, 0, item.img.width, item.img.height, 0, 0, 1, 1);
+            const data = tCtx.getImageData(0, 0, 1, 1).data;
+            hues.push(`rgb(${data[0]}, ${data[1]}, ${data[2]})`);
+          }
+
           const row = Math.floor(i / gridN);
           const col = i % gridN;
           
@@ -89,6 +110,9 @@ export function CollageBuilder() {
           ctx.restore();
         });
 
+        // Setup the maximum swatches (up to 8 visual swatches)
+        setExtractedHues(hues.slice(0, 8));
+
         // Add sleek minimal borders inside the grid
         ctx.strokeStyle = '#ffffff';
         ctx.lineWidth = 6;
@@ -124,55 +148,84 @@ export function CollageBuilder() {
   const handleFinish = async () => {
     await clearSharedImages();
     sessionStorage.removeItem('cropData');
+    localStorage.removeItem('colorDate_challenge');
     navigate('/');
   };
 
   return (
-    <div className="flex flex-col w-full h-full max-w-md mx-auto py-8 px-4 text-white">
-      <h1 className="text-3xl font-extrabold mb-2 text-center bg-clip-text text-transparent bg-gradient-to-r from-white to-zinc-400">Final Masterpiece</h1>
-      <p className="text-zinc-500 text-sm text-center mb-8 font-medium">Your asynchronous date is complete!</p>
+    <div className="font-body text-on-background min-h-[100dvh] flex flex-col bg-background animate-fade-in relative z-0">
+      
+      {/* TopAppBar */}
+      <header className="absolute top-0 w-full flex justify-between items-center px-6 py-4 bg-transparent z-50">
+        <div className="flex items-center gap-4">
+          <button type="button" onClick={() => navigate('/menu')} className="material-symbols-outlined text-on-surface cursor-pointer hover:bg-black/5 p-2 transition-colors border-0 bg-transparent">close</button>
+          <h1 className="font-serif text-2xl lowercase tracking-tighter text-on-surface">COLOUR DATE</h1>
+        </div>
+      </header>
 
-      <canvas ref={canvasRef} style={{ display: 'none' }} />
+      <main className="flex-grow flex flex-col items-center justify-center pt-24 pb-12 px-6">
+        <div className="max-w-screen-md w-full">
+          
+          {/* Editorial Header Section */}
+          <div className="mb-12 border-l-4 border-primary pl-6">
+            <h2 className="font-headline text-4xl lg:text-5xl text-on-surface mb-2">Final Composition</h2>
+            <p className="font-label uppercase tracking-[0.2em] text-xs text-on-surface-variant">
+              {challenge ? `${challenge.targetColour.name}, ${challenge.city.toUpperCase()}` : 'LOADING...'}
+            </p>
+          </div>
 
-      <div className="flex-1 flex flex-col items-center justify-center relative w-full">
-        <div className="absolute inset-0 bg-brand/10 blur-[100px] rounded-full pointer-events-none"></div>
+          <canvas ref={canvasRef} style={{ display: 'none' }} />
 
-        {isBuilding ? (
-          <div className="relative z-10 flex flex-col items-center bg-zinc-900/50 backdrop-blur-xl border border-zinc-800 p-10 rounded-[2rem] shadow-2xl">
-            <div className="relative w-16 h-16 mb-6">
-              <div className="absolute inset-0 border-4 border-zinc-800 rounded-full"></div>
-              <div className="absolute inset-0 border-4 border-brand border-t-transparent rounded-full animate-spin"></div>
+          {/* Collage Display */}
+          <div className="bg-surface-container-low p-1 mb-12 border border-outline-variant/20 shadow-xl shadow-black/5">
+            {isBuilding ? (
+              <div className="aspect-square flex flex-col items-center justify-center bg-surface-variant">
+                  <div className="relative w-12 h-12 mb-6">
+                    <div className="absolute inset-0 border-4 border-outline-variant/30 rounded-full"></div>
+                    <div className="absolute inset-0 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+                  </div>
+              </div>
+            ) : collageUrl ? (
+              <img src={collageUrl} alt="Final composition" className="w-full aspect-square object-cover shadow-sm animate-fade-in mix-blend-multiply" />
+            ) : null}
+          </div>
+
+          {/* Metadata & Actions */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-16 border-t border-outline-variant/30 pt-8">
+            <div>
+              <span className="font-label uppercase tracking-[0.2em] text-[10px] text-on-surface-variant block mb-4">Provenance</span>
+              <p className="font-body text-sm leading-relaxed text-secondary pr-4">
+                A curated exploration of hue found in the contrasting urban landscapes of your city. 
+                This composition captures the organic vibrancy against the specific hues of your colour date.
+              </p>
             </div>
-            <p className="text-zinc-300 font-bold tracking-wide">Composing Photos...</p>
+            
+            <div className="flex flex-col justify-start md:justify-end border-l border-outline-variant/30 pl-4 md:pl-8">
+              <div className="flex flex-wrap gap-2 mb-3">
+                {extractedHues.map((hue, i) => (
+                  <div key={i} className="w-8 h-8 md:w-6 md:h-6 border border-black/10 shadow-sm transition-transform hover:scale-110" style={{ backgroundColor: hue }}></div>
+                ))}
+              </div>
+              <span className="font-label text-[10px] tracking-[0.1em] text-on-surface-variant uppercase">
+                HUE EXTRACTION COMPLETE / 100% ACCURACY
+              </span>
+            </div>
           </div>
-        ) : collageUrl ? (
-          <div className="relative z-10 w-full transform transition-all hover:scale-[1.02] duration-500 ease-out">
-            <img 
-              src={collageUrl} 
-              alt="Final Collage" 
-              className="w-full aspect-square rounded-[2rem] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.8)] border border-zinc-800/50 object-cover animate-fade-in"
-            />
-          </div>
-        ) : null}
-      </div>
 
-      <div className="mt-12 space-y-4 relative z-10 pb-4">
-        {collageUrl && (
-          <a
-            href={collageUrl}
-            download="ColourDate-Date.jpg"
-            className="flex items-center justify-center w-full py-4.5 bg-white text-black font-black uppercase tracking-widest text-lg rounded-2xl shadow-[0_0_30px_-5px_rgba(255,255,255,0.3)] active:scale-[0.98] transition-all"
-          >
-            ↓ Save to Device
-          </a>
-        )}
-        <button 
-          onClick={handleFinish}
-          className="w-full py-4 bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-white font-bold text-lg rounded-2xl active:scale-[0.98] transition-all"
-        >
-          Reset Session
-        </button>
-      </div>
+          {/* Actions */}
+          <div className="flex flex-col sm:flex-row gap-4 w-full">
+            {collageUrl && (
+              <a href={collageUrl} download="ColourDate-Date.jpg" className="flex-1 bg-primary text-on-primary py-4 px-8 font-label uppercase tracking-[0.2em] text-sm hover:bg-zinc-800 transition-colors duration-200 active:scale-[0.98] text-center border border-primary flex items-center justify-center">
+                DOWNLOAD
+              </a>
+            )}
+            <button type="button" onClick={handleFinish} className="flex-1 border border-primary text-primary py-4 px-8 font-label uppercase tracking-[0.2em] text-sm hover:bg-surface-container-low transition-colors duration-200 active:scale-[0.98] bg-transparent pb-[15px]">
+              FINISH SESSION
+            </button>
+          </div>
+
+        </div>
+      </main>
     </div>
   );
 }

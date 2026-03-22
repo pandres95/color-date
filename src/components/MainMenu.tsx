@@ -33,46 +33,56 @@ export function MainMenu() {
   };
 
   return (
-    <div className="flex flex-col w-full h-full max-w-md mx-auto py-8 px-4 text-white overflow-hidden items-center justify-center">
-      
-      <div className="mb-12 text-center animate-fade-in">
-        <div className="relative z-10 w-24 h-24 mx-auto bg-gradient-to-br from-brand to-rose-500 rounded-[2rem] shadow-[0_20px_40px_-5px_rgba(255,87,51,0.5)] flex items-center justify-center text-4xl mb-6 border border-white/20">
-          ✨
-        </div>
-        <h1 className="text-4xl font-extrabold tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-zinc-100 to-zinc-400">
-          Colour Date
-        </h1>
-        <p className="text-zinc-500 font-medium mt-2">The asynchronous photo challenge</p>
-      </div>
-
-      <div className="w-full space-y-4 relative z-10 animate-fade-in" style={{ animationDelay: '150ms', animationFillMode: 'both' }}>
+    <main className="min-[100dvh] flex flex-col bg-background text-on-background animate-fade-in">
+      <section className="flex-1 flex flex-col justify-between p-8 md:p-20">
         
-        {activeChallenge && (
-          <div className="bg-zinc-900 border border-zinc-800 p-5 rounded-3xl mb-8 relative overflow-hidden group">
-            <div className="absolute inset-0 bg-brand/5"></div>
-            <div className="relative z-10">
-              <span className="text-xs font-bold uppercase tracking-widest text-brand mb-1 block">Active Challenge</span>
-              <h3 className="text-xl font-extrabold text-white">{activeChallenge.targetColour.name}</h3>
-              <p className="text-zinc-400 text-sm mt-1">{activeChallenge.gridSize * activeChallenge.gridSize} Photos in {activeChallenge.city}</p>
-              
+        <div className="mt-12 md:mt-16 max-w-2xl">
+          <h1 className="font-headline text-5xl md:text-7xl leading-tight tracking-tight italic">
+            Capture your city’s hues, together.
+          </h1>
+          {activeChallenge && (
+            <div className="mt-8 border-l-2 border-outline-variant/30 pl-4 py-1 animate-fade-in">
+              <span className="font-label text-xs tracking-[0.2em] uppercase text-outline-variant block mb-2">Current Mission</span>
+              <p className="font-headline text-2xl mb-1">{activeChallenge.targetColour?.name}</p>
+              <p className="font-body text-sm text-on-surface-variant flex items-center gap-2">
+                <span>{activeChallenge.city}</span>
+                <span className="text-outline-variant">•</span>
+                <span>{activeChallenge.gridSize * activeChallenge.gridSize} Photos</span>
+              </p>
+            </div>
+          )}
+        </div>
+
+        <div className="mt-auto pt-8">
+          {activeChallenge ? (
+            <div className="flex flex-col md:flex-row gap-4">
               <button 
+                type="button"
                 onClick={handleContinue}
-                className="w-full py-4 mt-6 bg-brand text-white font-black text-lg rounded-2xl shadow-lg active:scale-[0.98] transition-all"
+                className="flex-1 px-12 py-6 bg-primary text-on-primary font-label text-xs tracking-[0.2em] uppercase hover:bg-zinc-800 active:scale-95 transition-all duration-300 shadow-none border-0"
               >
-                Continue Date
+                OPEN CHALLENGE
+              </button>
+              <button 
+                type="button"
+                onClick={handleNewChallenge}
+                className="flex-1 px-12 py-6 border border-primary text-primary font-label text-xs tracking-[0.2em] uppercase hover:bg-surface-container-low active:scale-95 transition-all duration-300 bg-transparent"
+              >
+                NEW CHALLENGE
               </button>
             </div>
-          </div>
-        )}
+          ) : (
+            <button 
+              type="button"
+              onClick={handleNewChallenge}
+              className="w-full md:w-auto px-12 py-6 bg-primary text-on-primary font-label text-xs tracking-[0.2em] uppercase hover:bg-zinc-800 active:scale-95 transition-all duration-300 shadow-none border-0"
+            >
+              START CHALLENGE
+            </button>
+          )}
+        </div>
 
-        <button 
-          onClick={handleNewChallenge}
-          className={`w-full py-4.5 bg-zinc-800 text-white font-bold text-lg rounded-2xl border border-zinc-700 hover:bg-zinc-700 active:scale-[0.98] transition-all ${!activeChallenge ? 'bg-white text-black shadow-[0_0_30px_-5px_rgba(255,255,255,0.3)]' : ''}`}
-        >
-          {activeChallenge ? 'Descart / New Challenge' : 'Start New Challenge'}
-        </button>
-
-      </div>
-    </div>
+      </section>
+    </main>
   );
 }

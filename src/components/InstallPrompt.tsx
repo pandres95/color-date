@@ -63,50 +63,51 @@ export function InstallPrompt() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[90vh] text-center p-6 w-full animate-fade-in">
+    <div className="flex flex-col items-center justify-center min-h-screen text-center p-8 md:p-20 w-full animate-fade-in bg-background text-on-background space-y-12">
       
-      {/* Immersive Background Glow */}
-      <div className="absolute top-1/4 w-64 h-64 bg-brand/20 blur-[100px] rounded-full pointer-events-none"></div>
-
-      <div className="relative z-10 w-28 h-28 bg-gradient-to-br from-brand to-rose-500 rounded-[2rem] shadow-[0_20px_40px_-10px_rgba(255,87,51,0.5)] flex items-center justify-center text-5xl mb-8 animate-float border border-white/20">
-        ✨
+      <div className="max-w-2xl">
+        <h1 className="font-headline text-5xl md:text-7xl leading-tight tracking-tight italic mb-6">
+          Capture your city’s hues, together.
+        </h1>
+        
+        <p className="text-lg text-on-surface-variant font-body mb-12">
+          Let's sync up! Install the app to your device to begin the photo challenge.
+        </p>
       </div>
-      
-      <h1 className="relative z-10 text-5xl font-black tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-zinc-100 to-zinc-400 mb-4">
-        Colour Date
-      </h1>
-      
-      <p className="relative z-10 text-lg text-zinc-400 max-w-[280px] font-medium leading-relaxed">
-        Let's sync up! Install the app to your device to begin the photo challenge.
-      </p>
 
       {deferredPrompt ? (
-        <div className="relative z-10 w-full max-w-xs mt-12">
+        <div className="w-full mt-auto">
           <button 
             type="button"
             onClick={handleInstallClick}
-            className="w-full py-4.5 bg-white text-black font-black uppercase tracking-widest text-lg rounded-2xl shadow-[0_0_40px_-5px_rgba(255,255,255,0.4)] active:scale-95 transition-all"
+            className="w-full md:w-auto px-12 py-6 bg-primary text-on-primary font-label text-xs tracking-[0.2em] uppercase hover:bg-zinc-800 transition-colors duration-300"
           >
-            Install App
+            INSTALL APP
           </button>
         </div>
       ) : (
-        <div className="relative z-10 bg-zinc-900/80 backdrop-blur-md border border-zinc-800 p-6 rounded-3xl max-w-sm shadow-2xl mt-12 w-full text-left">
-          <h3 className="text-white font-bold mb-4 text-center">Manual Setup Required</h3>
-          <ol className="space-y-4 text-zinc-400 text-sm">
-            <li className="flex items-start">
-              <span className="bg-brand text-white w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold mr-3 mt-0.5 shrink-0 shadow-sm">1</span>
-              <span>Tap the <b>menu icon</b> (share or three dots) in your browser.</span>
-            </li>
-            <li className="flex items-start bg-zinc-800/50 p-3 rounded-xl border border-zinc-700/50">
-              <span className="bg-brand text-white w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold mr-3 mt-0.5 shrink-0 shadow-sm">2</span>
-              <span>Select <b className="text-white">"Add to Home screen"</b> or "Install app".</span>
-            </li>
-            <li className="flex items-start">
-              <span className="bg-brand text-white w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold mr-3 mt-0.5 shrink-0 shadow-sm">3</span>
-              <span>Open the app directly from your home screen!</span>
-            </li>
-          </ol>
+        <div className="w-full max-w-xl text-left border-t border-outline-variant/30 pt-12">
+          <p className="font-label text-xs tracking-[0.2em] uppercase text-outline mb-8">Manual Setup Required</p>
+          <div className="space-y-8">
+            <div className="flex gap-8 items-start">
+              <span className="font-headline text-4xl text-outline-variant/60 leading-none">01</span>
+              <div className="pt-1">
+                <p className="text-lg leading-relaxed text-on-surface font-body">Tap the <b>menu icon</b> (share or three dots) in your browser.</p>
+              </div>
+            </div>
+            <div className="flex gap-8 items-start">
+              <span className="font-headline text-4xl text-outline-variant/60 leading-none">02</span>
+              <div className="pt-1">
+                <p className="text-lg leading-relaxed text-on-surface font-body">Select <b className="border-b border-primary/20 italic">"Add to Home screen"</b> or "Install app".</p>
+              </div>
+            </div>
+            <div className="flex gap-8 items-start">
+              <span className="font-headline text-4xl text-outline-variant/60 leading-none">03</span>
+              <div className="pt-1">
+                <p className="text-lg leading-relaxed text-on-surface font-body">Open the app directly from your home screen!</p>
+              </div>
+            </div>
+          </div>
         </div>
       )}
     </div>

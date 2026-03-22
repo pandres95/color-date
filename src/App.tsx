@@ -8,15 +8,13 @@ import { CollageBuilder } from './components/CollageBuilder';
 function App() {
   return (
     <Router>
-      <div className="w-full h-screen relative bg-zinc-950 flex flex-col items-center justify-center container mx-auto p-4 max-w-md">
-        <Routes>
-          <Route path="/" element={<InstallPrompt />} />
-          <Route path="/menu" element={<MainMenu />} />
-          <Route path="/setup" element={<SetupDate />} />
-          <Route path="/crop" element={<CropAdjust />} />
-          <Route path="/collage" element={<CollageBuilder />} />
-        </Routes>
-      </div>
+      <Routes>
+        <Route path="/" element={<InstallPrompt />} />
+        <Route path="/menu" element={<MainMenu />} />
+        <Route path="/setup" element={<SetupDate />} />
+        <Route path="/crop" element={<CropAdjust />} />
+        <Route path="/collage" element={<CollageBuilder />} />
+      </Routes>
     </Router>
   );
 }

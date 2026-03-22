@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>COLOUR DATE</title>
+<!-- Google Fonts: Noto Serif for headlines, Work Sans for labels, Inter for body -->
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400&amp;family=Work+Sans:wght@300;400;500;600&amp;family=Inter:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-surface": "#1A1A1A",
+                        "surface": "#FAFAFA",
+                        "surface-container-low": "#F3F3F3",
+                        "surface-container-highest": "#E2E2E2",
+                        "primary": "#1A1A1A",
+                        "on-primary": "#FAFAFA",
+                        "outline-variant": "#C6C6C6",
+                        "outline": "#777777",
+                    },
+                    fontFamily: {
+                        "noto-serif": ["Noto Serif", "serif"],
+                        "work-sans": ["Work Sans", "sans-serif"],
+                        "inter": ["Inter", "sans-serif"],
+                    },
+                    borderRadius: {
+                        "none": "0px",
+                        "DEFAULT": "0px",
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        /* Custom scrollbar for editorial feel */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: #FAFAFA; }
+        ::-webkit-scrollbar-thumb { background: #1A1A1A; }
+        
+        [v-cloak] { display: none; }
+        
+        /* Ensuring strict viewport heights for the Hue view */
+        .h-70vh { height: 70vh; }
+        .h-30vh { height: 30vh; }
+
+        body {
+            min-height: max(884px, 100dvh);
+            background-color: #FAFAFA;
+            color: #1A1A1A;
+        }
+    </style>
+<!-- Vue 3 for Interactivity -->
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+<body class="font-inter antialiased overflow-x-hidden">
+<div id="app" v-cloak="">
+<main class="min-h-screen flex flex-col">
+<!-- VIEW 1: WELCOME -->
+<section class="flex-1 flex flex-col justify-between p-8 md:p-20" v-if="currentView === 'welcome'">
+<div class="mt-20 md:mt-32 max-w-2xl">
+<h1 class="font-noto-serif text-5xl md:text-7xl leading-tight tracking-tight italic">
+                Capture your city’s hues, together.
+            </h1>
+</div>
+<div class="mt-auto">
+<div class="flex flex-col md:flex-row gap-4" v-if="hasOngoingChallenge">
+<button @click="currentView = 'instructions'" class="flex-1 px-12 py-6 bg-primary text-on-primary font-work-sans text-xs tracking-[0.2em] uppercase hover:bg-zinc-800 transition-colors duration-300">
+                    OPEN CHALLENGE
+                </button>
+<button @click="resetAndStartNew" class="flex-1 px-12 py-6 border border-primary text-primary font-work-sans text-xs tracking-[0.2em] uppercase hover:bg-surface-container-low transition-colors duration-300">
+                    NEW CHALLENGE
+                </button>
+</div>
+<button @click="currentView = 'layout'" class="w-full md:w-auto px-12 py-6 bg-primary text-on-primary font-work-sans text-xs tracking-[0.2em] uppercase hover:bg-zinc-800 transition-colors duration-300" v-else="">
+                START CHALLENGE
+            </button>
+</div>
+</section>
+<!-- VIEW 2: LAYOUT SELECTION -->
+<section class="flex-1 flex flex-col p-8 md:p-20" v-if="currentView === 'layout'">
+<div class="mb-16">
+<p class="font-work-sans text-xs tracking-[0.2em] uppercase text-gray-400 mb-4">Step 01</p>
+<h2 class="font-noto-serif text-4xl">Select your layout</h2>
+</div>
+<div class="flex flex-col border-t border-outline-variant/30">
+<button :key="size" @click="currentView = 'location'" class="group py-12 flex justify-between items-center border-b border-outline-variant/30 hover:bg-surface-container-low transition-colors px-4" v-for="size in ['2x2', '3x3', '4x4']">
+<span class="font-noto-serif text-3xl">{{ size }}</span>
+<span class="material-symbols-outlined opacity-0 group-hover:opacity-100 transition-opacity">arrow_forward</span>
+</button>
+</div>
+</section>
+<!-- VIEW 3: LOCATION -->
+<section class="flex-1 flex flex-col p-8 md:p-20" v-if="currentView === 'location'">
+<div class="mb-16">
+<p class="font-work-sans text-xs tracking-[0.2em] uppercase text-gray-400 mb-4">Step 02</p>
+<h2 class="font-noto-serif text-4xl">Where are we exploring today?</h2>
+</div>
+<div class="flex flex-col border-t border-outline-variant/30">
+<button :key="city" @click="currentView = 'hue'" class="group py-12 flex justify-between items-center border-b border-outline-variant/30 hover:bg-surface-container-low transition-colors px-4" v-for="city in ['Bogotá', 'Toulouse']">
+<span class="font-noto-serif text-3xl">{{ city }}</span>
+<span class="material-symbols-outlined opacity-0 group-hover:opacity-100 transition-opacity">location_on</span>
+</button>
+</div>
+</section>
+<!-- VIEW 4: TARGET HUE -->
+<section class="flex-1 flex flex-col h-screen overflow-hidden" v-if="currentView === 'hue'">
+<!-- Color Block: 70% height -->
+<div :style="{ backgroundColor: activeColor.hex }" class="h-70vh w-full transition-colors duration-700"></div>
+<!-- Content Area: 30% height -->
+<div class="h-30vh p-6 md:p-12 flex flex-col justify-between bg-surface border-t border-outline-variant/20">
+<div class="flex flex-col">
+<div class="flex flex-col md:flex-row md:items-baseline md:gap-4 mb-1">
+<h3 class="font-noto-serif text-3xl md:text-4xl italic leading-none">{{ activeColor.name }}</h3>
+<span class="font-work-sans text-[10px] tracking-widest text-gray-500 uppercase">{{ activeColor.hex }}</span>
+</div>
+<p class="font-inter text-xs text-gray-500 italic mt-1">{{ activeColor.hint }}</p>
+</div>
+<div class="flex gap-3 mt-4">
+<button @click="regenerateColor" class="flex-1 py-4 border border-primary font-work-sans text-[10px] tracking-[0.2em] uppercase hover:bg-surface-container-low transition-colors">
+                    REGENERATE
+                </button>
+<button @click="acceptChallenge" class="flex-1 py-4 bg-primary text-on-primary font-work-sans text-[10px] tracking-[0.2em] uppercase hover:bg-zinc-800 transition-colors">
+                    ACCEPT CHALLENGE
+                </button>
+</div>
+</div>
+</section>
+<!-- VIEW 5: INSTRUCTIONS -->
+<section class="flex-1 flex flex-col p-8 md:p-20" v-if="currentView === 'instructions'">
+<div class="mb-16 flex flex-col md:flex-row md:items-end justify-between gap-8 border-b border-outline-variant/30 pb-12">
+<div>
+<p class="font-work-sans text-xs tracking-[0.2em] uppercase text-gray-400 mb-4">The Brief</p>
+<h2 class="font-noto-serif text-4xl">Your objective</h2>
+</div>
+<div class="flex items-center gap-4 bg-surface-container-low p-4">
+<div :style="{ backgroundColor: activeColor.hex }" class="w-10 h-10 border border-black/5"></div>
+<div>
+<p class="font-work-sans text-[9px] tracking-widest uppercase text-gray-500 leading-tight">Target Hue</p>
+<p class="font-noto-serif text-sm italic font-bold leading-tight">{{ activeColor.name }}</p>
+<p class="font-work-sans text-[9px] text-gray-400 mt-0.5">{{ activeColor.hex }}</p>
+</div>
+</div>
+</div>
+<div class="space-y-16 max-w-3xl">
+<div class="flex gap-8 items-start">
+<span class="font-noto-serif text-6xl text-outline-variant/40 leading-none">01</span>
+<div class="pt-2">
+<h4 class="font-work-sans font-medium uppercase tracking-widest text-xs mb-3">Observation</h4>
+<p class="text-lg leading-relaxed text-gray-600">Walk through the streets and look for textures, objects, or architecture that match the <span class="border-b border-primary/20 italic">{{ activeColor.name }}</span> hue.</p>
+</div>
+</div>
+<div class="flex gap-8 items-start">
+<span class="font-noto-serif text-6xl text-outline-variant/40 leading-none">02</span>
+<div class="pt-2">
+<h4 class="font-work-sans font-medium uppercase tracking-widest text-xs mb-3">Composition</h4>
+<p class="text-lg leading-relaxed text-gray-600">Photograph 4 distinct elements. Ensure the color remains the protagonist of your frame.</p>
+</div>
+</div>
+<div class="flex gap-8 items-start">
+<span class="font-noto-serif text-6xl text-outline-variant/40 leading-none">03</span>
+<div class="pt-2">
+<h4 class="font-work-sans font-medium uppercase tracking-widest text-xs mb-3">Review</h4>
+<p class="text-lg leading-relaxed text-gray-600">Meet back at the starting point to compare your palettes and create the final archive.</p>
+</div>
+</div>
+</div>
+<div class="mt-20 flex gap-4">
+<button @click="currentView = 'welcome'" class="px-12 py-6 bg-primary text-on-primary font-work-sans text-xs tracking-[0.2em] uppercase transition-all active:scale-95 hover:bg-zinc-800">
+                BEGIN ARCHIVING
+            </button>
+</div>
+</section>
+</main>
+</div>
+<script>
+    const { createApp, ref } = Vue;
+
+    createApp({
+        setup() {
+            const currentView = ref('welcome');
+            const hasOngoingChallenge = ref(true); // Ongoing challenge state
+            
+            const colors = [
+                { name: "Fucsia Bugambilia", hex: "#D11149", hint: "Look for this in vibrant street murals or flowering balconies." },
+                { name: "Amber Ochre", hex: "#FFC107", hint: "Often found in sun-drenched facades or aged window frames." },
+                { name: "Jungle Veridian", hex: "#00A86B", hint: "Search for tiled entryways or lush urban greenery." },
+                { name: "Cobalt Dusk", hex: "#2E5090", hint: "Found in industrial details or deep evening shadows." },
+                { name: "Terra Cotta", hex: "#E2725B", hint: "Classic clay roofs or weathered brickwork." }
+            ];
+            
+            const activeColor = ref(colors[0]);
+            
+            const regenerateColor = () => {
+                let nextIndex;
+                do {
+                    nextIndex = Math.floor(Math.random() * colors.length);
+                } while (colors[nextIndex].hex === activeColor.value.hex);
+                
+                activeColor.value = colors[nextIndex];
+            };
+
+            const acceptChallenge = () => {
+                hasOngoingChallenge.value = true;
+                currentView.value = 'instructions';
+            };
+
+            const resetAndStartNew = () => {
+                hasOngoingChallenge.value = false;
+                currentView.value = 'layout';
+            };
+
+            return {
+                currentView,
+                hasOngoingChallenge,
+                activeColor,
+                regenerateColor,
+                acceptChallenge,
+                resetAndStartNew
+            };
+        }
+    }).mount('#app');
+</script>
+</body></html>
