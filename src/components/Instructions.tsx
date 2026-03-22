@@ -2,10 +2,9 @@ import { useNavigate } from "react-router-dom";
 
 export function Instructions({ targetColour }: { targetColour: { name: string, hex: string } | null }) {
   const navigate = useNavigate();
-  
+
   return (
     <main className="min-h-[100svh] flex flex-col pt-safe pb-safe">
-      {/* VIEW 5: INSTRUCTIONS — exact Stitch markup */}
       <section className="flex-1 flex flex-col p-8 md:p-20 overflow-y-auto">
         <div className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-8 pb-12">
           <div>

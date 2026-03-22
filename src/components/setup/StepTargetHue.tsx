@@ -2,8 +2,7 @@ import { useEffect } from "react";
 import { generateTargetColour } from "../../utils/colours";
 
 export function StepTargetHue({ city, targetColour, setTargetColour, onAccept }: { city: 'Bogota' | 'Toulouse', targetColour: { name: string, hex: string } | null, setTargetColour: (colour: { name: string, hex: string }) => void, onAccept: () => void }) {
-  
-  // Auto-generate on mount if empty
+
   useEffect(() => {
     if (!targetColour) {
       setTargetColour(generateTargetColour(city));
@@ -18,11 +17,10 @@ export function StepTargetHue({ city, targetColour, setTargetColour, onAccept }:
 
   return (
     <main className="min-h-[100svh] flex flex-col pt-safe pb-safe">
-      {/* VIEW 4: TARGET HUE — exact Stitch markup */}
       <section className="flex-1 flex flex-col h-[100svh] overflow-hidden">
-        {/* Color Block: 70% height */}
+        {/* Color Block: 70% height — full width, no padding */}
         <div style={{ backgroundColor: targetColour.hex }} className="h-svh-70 w-full transition-colors duration-700"></div>
-        {/* Content Area: 30% height */}
+        {/* Content Area: 30% height — only this has padding */}
         <div className="h-svh-30 p-6 md:p-12 flex flex-col justify-between bg-surface">
           <div className="flex flex-col">
             <div className="flex flex-col md:flex-row md:items-baseline md:gap-4 mb-1">
