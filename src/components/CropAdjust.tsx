@@ -7,6 +7,7 @@ export interface CropData {
   x: number;
   y: number;
   scale: number;
+  viewportSize: number;
 }
 
 export function CropAdjust() {
@@ -32,7 +33,7 @@ export function CropAdjust() {
         }
         const mapped = files.map(f => ({ file: f, url: URL.createObjectURL(f) }));
         setImages(mapped);
-        setCropDataList(mapped.map(() => ({ x: 0, y: 0, scale: 1 })));
+        setCropDataList(mapped.map(() => ({ x: 0, y: 0, scale: 1, viewportSize: 0 })));
       } catch (e) {
         console.error('Failed to load shared images', e);
       } finally {
@@ -76,8 +77,9 @@ export function CropAdjust() {
   };
 
   const handleNext = () => {
+    const viewportSize = containerRef.current?.clientWidth || 350;
     const newCropList = [...cropDataList];
-    newCropList[currentIndex] = { x: x.current, y: y.current, scale: scale.current };
+    newCropList[currentIndex] = { x: x.current, y: y.current, scale: scale.current, viewportSize };
     setCropDataList(newCropList);
 
     if (currentIndex < images.length - 1) {
