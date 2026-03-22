@@ -1,7 +1,19 @@
+import { useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { clearSharedImages, saveSharedImages } from "../utils/idb";
 
-export function Instructions({ targetColour }: { targetColour: { name: string, hex: string } | null }) {
+export function Instructions({ targetColour, gridSize }: { targetColour: { name: string, hex: string } | null, gridSize: number }) {
   const navigate = useNavigate();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const photoCount = gridSize * gridSize;
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+    await clearSharedImages();
+    await saveSharedImages(Array.from(files));
+    navigate('/crop');
+  };
 
   return (
     <main className="min-h-[100svh] flex flex-col pt-safe pb-safe">
@@ -36,7 +48,7 @@ export function Instructions({ targetColour }: { targetColour: { name: string, h
             <span className="font-noto-serif text-6xl text-outline-variant/40 leading-none">02</span>
             <div className="pt-2">
               <h4 className="font-work-sans font-medium uppercase tracking-widest text-xs mb-3">Composition</h4>
-              <p className="text-lg leading-relaxed text-gray-600">Photograph 4 distinct elements. Ensure the color remains the protagonist of your frame.</p>
+              <p className="text-lg leading-relaxed text-gray-600">Photograph <span className="font-noto-serif italic">{photoCount}</span> distinct elements. Ensure the color remains the protagonist of your frame.</p>
             </div>
           </div>
           <div className="flex gap-8 items-start">
@@ -44,6 +56,29 @@ export function Instructions({ targetColour }: { targetColour: { name: string, h
             <div className="pt-2">
               <h4 className="font-work-sans font-medium uppercase tracking-widest text-xs mb-3">Review</h4>
               <p className="text-lg leading-relaxed text-gray-600">Meet back at the starting point to compare your palettes and create the final archive.</p>
+            </div>
+          </div>
+          <div className="flex gap-8 items-start">
+            <span className="font-noto-serif text-6xl text-outline-variant/40 leading-none">04</span>
+            <div className="pt-2">
+              <h4 className="font-work-sans font-medium uppercase tracking-widest text-xs mb-3">Upload</h4>
+              <p className="text-lg leading-relaxed text-gray-600 mb-6">Share your photos directly from your gallery to Colour Date, or use the button below to select them manually.</p>
+              {/* Hidden file input */}
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                multiple
+                className="hidden selectable"
+                onChange={handleFileUpload}
+              />
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="min-h-[48px] px-8 py-4 border border-primary text-primary font-work-sans text-[10px] tracking-[0.2em] uppercase transition-all active:bg-surface-container-low"
+              >
+                SELECT PHOTOS
+              </button>
             </div>
           </div>
         </div>
@@ -54,7 +89,7 @@ export function Instructions({ targetColour }: { targetColour: { name: string, h
             onClick={() => navigate('/menu')}
             className="w-full min-h-[48px] py-6 bg-primary text-on-primary font-work-sans text-[10px] tracking-[0.2em] uppercase transition-all active:opacity-80"
           >
-            BEGIN ARCHIVING
+            BACK TO MENU
           </button>
         </div>
       </section>

@@ -68,7 +68,7 @@ export function SetupDate() {
 				/>
 			)}
 
-			{step === 4 && <Instructions targetColour={targetColour} />}
+			{step === 4 && <Instructions targetColour={targetColour} gridSize={gridSize} />}
 		</>
 	);
 }

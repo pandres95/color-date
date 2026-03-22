@@ -20,6 +20,7 @@ export function CropAdjust() {
   const y = useRef(0);
   const scale = useRef(1);
   const imgRef = useRef<HTMLImageElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     async function fetchImages() {
@@ -41,6 +42,14 @@ export function CropAdjust() {
     fetchImages();
   }, [navigate]);
 
+  // Reset transform when switching images
+  useEffect(() => {
+    if (imgRef.current) {
+      imgRef.current.style.transform = `translate3d(${x.current}px, ${y.current}px, 0) scale(${scale.current})`;
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentIndex]);
+
   useGesture(
     {
       onDrag: ({ offset: [dx, dy] }) => {
@@ -54,7 +63,7 @@ export function CropAdjust() {
       }
     },
     {
-      target: imgRef,
+      target: containerRef,
       drag: { from: () => [x.current, y.current] },
       pinch: { scaleBounds: { min: 0.5, max: 5 }, modifierKey: null, from: () => [scale.current, 0] }
     }
@@ -94,53 +103,89 @@ export function CropAdjust() {
   const isLast = currentIndex === images.length - 1;
 
   return (
-    <div className="flex flex-col h-[100dvh] bg-primary text-on-primary overflow-hidden relative animate-fade-in">
-      
-      {/* Top Bar */}
-      <div className="absolute top-0 left-0 right-0 p-6 md:p-8 pt-[max(env(safe-area-inset-top),1.5rem)] md:pt-[max(env(safe-area-inset-top),2rem)] flex justify-between items-center z-20 mix-blend-difference pointer-events-none">
-        <h2 className="font-headline text-2xl italic text-on-primary">Adjust.</h2>
-        <button type="button" onClick={() => navigate('/menu')} className="pointer-events-auto p-2 text-on-primary hover:opacity-70 transition-opacity bg-transparent border-0">
-          <span className="material-symbols-outlined">close</span>
-        </button>
-      </div>
+    <>
+      {/* TopAppBar */}
+      <header className="fixed top-0 z-50 w-full bg-surface flex justify-between items-center px-6 py-4 pt-safe">
+        <div className="flex items-center gap-4">
+          <button type="button" onClick={() => navigate('/menu')} className="p-2 hover:bg-on-surface/5 transition-colors active:opacity-70">
+            <span className="material-symbols-outlined text-on-surface">close</span>
+          </button>
+        </div>
+      </header>
 
-      {/* Main Cropping Area (Gesture Receiver) */}
-      <div className="flex-1 relative overflow-hidden touch-none flex flex-col justify-center items-center h-full w-full">
-        <div 
-          className="relative w-full aspect-square md:w-auto md:h-[70vh] md:aspect-[1/1] overflow-hidden border border-outline-variant/30 touch-none bg-[#1A1A1A]"
+      <main className="min-h-screen pt-24 pb-32 px-6 flex flex-col items-start max-w-2xl mx-auto">
+        {/* Page Title */}
+        <div className="mb-12">
+          <p className="font-work-sans uppercase tracking-[0.2em] text-xs text-on-surface-variant mb-2">
+            Editor — Photo {currentIndex + 1} of {images.length}
+          </p>
+          <h2 className="font-noto-serif text-4xl text-on-surface">Crop Photo</h2>
+        </div>
+
+        {/* Cropping Viewport — gesture target */}
+        <div
+          ref={containerRef}
+          className="relative w-full aspect-square bg-surface-container-low ring-1 ring-outline-variant/10 overflow-hidden"
+          style={{ touchAction: 'none' }}
         >
-          {/* Subtle Grid guides */}
-          <div className="absolute inset-x-0 h-1/3 top-1/3 border-y border-outline-variant/20 pointer-events-none z-10 mix-blend-overlay" />
-          <div className="absolute inset-y-0 w-1/3 left-1/3 border-x border-outline-variant/20 pointer-events-none z-10 mix-blend-overlay" />
-          
+          {/* Grid Overlay (Editorial Guide) */}
+          <div className="absolute inset-0 z-10 pointer-events-none grid grid-cols-3 grid-rows-3 opacity-30">
+            <div className="border-r border-b border-on-surface"></div>
+            <div className="border-r border-b border-on-surface"></div>
+            <div className="border-b border-on-surface"></div>
+            <div className="border-r border-b border-on-surface"></div>
+            <div className="border-r border-b border-on-surface"></div>
+            <div className="border-b border-on-surface"></div>
+            <div className="border-r border-on-surface"></div>
+            <div className="border-r border-on-surface"></div>
+            <div></div>
+          </div>
+
+          {/* Subject Image — full colour, no desaturation */}
           <img
             ref={imgRef}
             src={images[currentIndex].url}
             alt="Crop target"
-            className="w-full h-full object-contain origin-center select-none cursor-grab active:cursor-grabbing"
+            className="w-full h-full object-cover origin-center select-none cursor-grab active:cursor-grabbing"
             style={{ touchAction: 'none' }}
           />
-        </div>
-      </div>
 
-      {/* Bottom Actions */}
-      <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8 pb-[max(env(safe-area-inset-bottom),1.5rem)] md:pb-[max(env(safe-area-inset-bottom),2rem)] flex flex-col md:flex-row justify-between md:items-end z-20 mix-blend-difference pointer-events-none">
-        <div>
-          <p className="font-label text-[10px] tracking-widest uppercase text-on-primary/70 mb-2 md:mb-0">Pinch and drag</p>
-          <p className="font-label text-[10px] tracking-widest uppercase text-on-primary/40 hidden md:block">Photo {currentIndex + 1} of {images.length}</p>
+          {/* Interaction Cues (Corners) */}
+          <div className="absolute top-0 left-0 w-8 h-8 border-t-2 border-l-2 border-primary z-20"></div>
+          <div className="absolute top-0 right-0 w-8 h-8 border-t-2 border-r-2 border-primary z-20"></div>
+          <div className="absolute bottom-0 left-0 w-8 h-8 border-b-2 border-l-2 border-primary z-20"></div>
+          <div className="absolute bottom-0 right-0 w-8 h-8 border-b-2 border-r-2 border-primary z-20"></div>
         </div>
-        
-        <div className="w-full md:w-auto mt-4 md:mt-0">
-          <button 
-            type="button"
-            onClick={handleNext}
-            className="w-full pointer-events-auto px-12 py-6 bg-on-primary text-primary font-label text-xs tracking-[0.2em] uppercase hover:bg-surface-container-low active:scale-[0.98] transition-all duration-300 shadow-none border-0"
-          >
-            {isLast ? 'BUILD COLLAGE' : 'CONFIRM CROP'}
-          </button>
+
+        {/* Instructions/Controls Cluster */}
+        <div className="w-full mt-10 grid grid-cols-2 gap-8">
+          <div className="flex flex-col gap-2">
+            <span className="font-work-sans uppercase tracking-[0.2em] text-[10px] text-on-surface-variant">Action</span>
+            <div className="flex items-center gap-3">
+              <span className="material-symbols-outlined text-sm">pan_tool</span>
+              <span className="font-work-sans uppercase tracking-[0.15em] text-xs">Pan to frame</span>
+            </div>
+          </div>
+          <div className="flex flex-col gap-2">
+            <span className="font-work-sans uppercase tracking-[0.2em] text-[10px] text-on-surface-variant">Method</span>
+            <div className="flex items-center gap-3">
+              <span className="material-symbols-outlined text-sm">pinch</span>
+              <span className="font-work-sans uppercase tracking-[0.15em] text-xs">Zoom to focus</span>
+            </div>
+          </div>
         </div>
+      </main>
+
+      {/* Confirm Action */}
+      <div className="fixed bottom-0 left-0 w-full bg-surface/90 backdrop-blur-md px-6 py-8 flex flex-col items-center pb-safe">
+        <button
+          type="button"
+          onClick={handleNext}
+          className="w-full max-w-md bg-primary text-on-primary font-work-sans uppercase tracking-[0.2em] text-sm py-5 active:scale-[0.98] transition-all duration-150"
+        >
+          {isLast ? 'BUILD COLLAGE' : 'CONFIRM CROP'}
+        </button>
       </div>
-      
-    </div>
+    </>
   );
 }

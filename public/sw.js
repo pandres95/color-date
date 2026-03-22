@@ -73,6 +73,9 @@ function saveImagesToIndexedDB(files) {
       const transaction = db.transaction('shared-images', 'readwrite');
       const store = transaction.objectStore('shared-images');
       
+      // Clear previous session images before adding new ones
+      store.clear();
+      
       let pending = files.length;
       if (pending === 0) resolve();
 
