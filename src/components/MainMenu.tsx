@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 export interface ChallengeData {
 	gridSize: number;
 	city: "Bogota" | "Toulouse";
-	targetColour: { name: string; hex: string };
+	targetColour: { name: string; hex: string; hint: string };
 }
 
 export function MainMenu() {

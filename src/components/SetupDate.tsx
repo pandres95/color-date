@@ -19,6 +19,7 @@ export function SetupDate() {
 	const [targetColour, setTargetColour] = useState<{
 		name: string;
 		hex: string;
+		hint: string;
 	} | null>(null);
 
 	// Resume active challenge if requested
