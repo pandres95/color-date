@@ -1,4 +1,5 @@
 # Design System Strategy: Editorial Minimalism
+*(Extracted directly from Stitch MCP global `designTheme` metadata via `mcp_StitchMCP_list_projects`)*
 
 ## 1. Overview & Creative North Star
 **Creative North Star: "The Silent Gallery"**
