@@ -86,7 +86,7 @@ export function CropAdjust() {
 
   if (isLoading) return (
     <div className="flex items-center justify-center min-h-screen">
-      <div className="w-12 h-12 border-4 border-zinc-200 border-t-brand rounded-full animate-spin"></div>
+      <div className="w-12 h-12 bg-surface-variant animate-pulse border-0"></div>
     </div>
   );
   if (!images.length) return null;
@@ -97,7 +97,7 @@ export function CropAdjust() {
     <div className="flex flex-col h-[100dvh] bg-primary text-on-primary overflow-hidden relative animate-fade-in">
       
       {/* Top Bar */}
-      <div className="absolute top-0 left-0 right-0 p-6 md:p-8 flex justify-between items-center z-20 mix-blend-difference pointer-events-none">
+      <div className="absolute top-0 left-0 right-0 p-6 md:p-8 pt-[max(env(safe-area-inset-top),1.5rem)] md:pt-[max(env(safe-area-inset-top),2rem)] flex justify-between items-center z-20 mix-blend-difference pointer-events-none">
         <h2 className="font-headline text-2xl italic text-on-primary">Adjust.</h2>
         <button type="button" onClick={() => navigate('/menu')} className="pointer-events-auto p-2 text-on-primary hover:opacity-70 transition-opacity bg-transparent border-0">
           <span className="material-symbols-outlined">close</span>
@@ -124,7 +124,7 @@ export function CropAdjust() {
       </div>
 
       {/* Bottom Actions */}
-      <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8 flex flex-col md:flex-row justify-between md:items-end z-20 mix-blend-difference pointer-events-none">
+      <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8 pb-[max(env(safe-area-inset-bottom),1.5rem)] md:pb-[max(env(safe-area-inset-bottom),2rem)] flex flex-col md:flex-row justify-between md:items-end z-20 mix-blend-difference pointer-events-none">
         <div>
           <p className="font-label text-[10px] tracking-widest uppercase text-on-primary/70 mb-2 md:mb-0">Pinch and drag</p>
           <p className="font-label text-[10px] tracking-widest uppercase text-on-primary/40 hidden md:block">Photo {currentIndex + 1} of {images.length}</p>
@@ -134,7 +134,7 @@ export function CropAdjust() {
           <button 
             type="button"
             onClick={handleNext}
-            className="w-full pointer-events-auto px-12 py-6 bg-on-primary text-primary font-label text-xs tracking-[0.2em] uppercase hover:bg-surface-container-low active:scale-[0.98] transition-all duration-300 border-0"
+            className="w-full pointer-events-auto px-12 py-6 bg-on-primary text-primary font-label text-xs tracking-[0.2em] uppercase hover:bg-surface-container-low active:scale-[0.98] transition-all duration-300 shadow-none border-0"
           >
             {isLast ? 'BUILD COLLAGE' : 'CONFIRM CROP'}
           </button>

@@ -63,7 +63,7 @@ export function InstallPrompt() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen text-center p-8 md:p-20 w-full animate-fade-in bg-background text-on-background space-y-12">
+    <div className="flex flex-col items-center justify-center min-h-screen text-center p-8 md:p-20 pt-[max(env(safe-area-inset-top),2rem)] md:pt-[max(env(safe-area-inset-top),5rem)] pb-[max(env(safe-area-inset-bottom),2rem)] md:pb-[max(env(safe-area-inset-bottom),5rem)] w-full animate-fade-in bg-background text-on-background space-y-12">
       
       <div className="max-w-2xl">
         <h1 className="font-headline text-5xl md:text-7xl leading-tight tracking-tight italic mb-6">
@@ -80,13 +80,13 @@ export function InstallPrompt() {
           <button 
             type="button"
             onClick={handleInstallClick}
-            className="w-full md:w-auto px-12 py-6 bg-primary text-on-primary font-label text-xs tracking-[0.2em] uppercase hover:bg-zinc-800 transition-colors duration-300"
+            className="w-full md:w-auto px-12 py-6 bg-primary text-on-primary font-label text-xs tracking-[0.2em] uppercase hover:bg-primary-fixed-dim transition-colors duration-300 shadow-none border-0"
           >
             INSTALL APP
           </button>
         </div>
       ) : (
-        <div className="w-full max-w-xl text-left border-t border-outline-variant/30 pt-12">
+        <div className="w-full max-w-xl text-left bg-surface-container-low p-8 mt-12">
           <p className="font-label text-xs tracking-[0.2em] uppercase text-outline mb-8">Manual Setup Required</p>
           <div className="space-y-8">
             <div className="flex gap-8 items-start">
@@ -98,7 +98,7 @@ export function InstallPrompt() {
             <div className="flex gap-8 items-start">
               <span className="font-headline text-4xl text-outline-variant/60 leading-none">02</span>
               <div className="pt-1">
-                <p className="text-lg leading-relaxed text-on-surface font-body">Select <b className="border-b border-primary/20 italic">"Add to Home screen"</b> or "Install app".</p>
+                <p className="text-lg leading-relaxed text-on-surface font-body">Select <b className="bg-surface italic px-1">"Add to Home screen"</b> or "Install app".</p>
               </div>
             </div>
             <div className="flex gap-8 items-start">

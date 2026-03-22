@@ -28,60 +28,47 @@ export function MainMenu() {
   };
 
   const handleContinue = () => {
-    // Redirects to setup, but triggers step 4 (Instructions) by loading state
     navigate('/setup?resume=true');
   };
 
   return (
-    <main className="min-[100dvh] flex flex-col bg-background text-on-background animate-fade-in">
+    <main className="min-h-[100svh] flex flex-col pt-safe pb-safe">
+      {/* VIEW 1: WELCOME — exact Stitch markup */}
       <section className="flex-1 flex flex-col justify-between p-8 md:p-20">
-        
-        <div className="mt-12 md:mt-16 max-w-2xl">
-          <h1 className="font-headline text-5xl md:text-7xl leading-tight tracking-tight italic">
-            Capture your city’s hues, together.
+        <div className="mt-20 md:mt-32 max-w-2xl">
+          <h1 className="font-noto-serif text-5xl md:text-7xl leading-tight tracking-tight italic">
+            Capture your city's hues, together.
           </h1>
-          {activeChallenge && (
-            <div className="mt-8 border-l-2 border-outline-variant/30 pl-4 py-1 animate-fade-in">
-              <span className="font-label text-xs tracking-[0.2em] uppercase text-outline-variant block mb-2">Current Mission</span>
-              <p className="font-headline text-2xl mb-1">{activeChallenge.targetColour?.name}</p>
-              <p className="font-body text-sm text-on-surface-variant flex items-center gap-2">
-                <span>{activeChallenge.city}</span>
-                <span className="text-outline-variant">•</span>
-                <span>{activeChallenge.gridSize * activeChallenge.gridSize} Photos</span>
-              </p>
-            </div>
-          )}
         </div>
 
-        <div className="mt-auto pt-8">
+        <div className="mt-auto flex flex-col gap-3">
           {activeChallenge ? (
-            <div className="flex flex-col md:flex-row gap-4">
-              <button 
+            <div className="flex flex-col gap-3">
+              <button
                 type="button"
                 onClick={handleContinue}
-                className="flex-1 px-12 py-6 bg-primary text-on-primary font-label text-xs tracking-[0.2em] uppercase hover:bg-zinc-800 active:scale-95 transition-all duration-300 shadow-none border-0"
+                className="w-full min-h-[48px] px-12 py-5 bg-primary text-on-primary font-work-sans text-[10px] tracking-[0.2em] uppercase transition-all active:opacity-80"
               >
                 OPEN CHALLENGE
               </button>
-              <button 
+              <button
                 type="button"
                 onClick={handleNewChallenge}
-                className="flex-1 px-12 py-6 border border-primary text-primary font-label text-xs tracking-[0.2em] uppercase hover:bg-surface-container-low active:scale-95 transition-all duration-300 bg-transparent"
+                className="w-full min-h-[48px] px-12 py-5 border border-primary text-primary font-work-sans text-[10px] tracking-[0.2em] uppercase transition-all active:bg-surface-container-low"
               >
                 NEW CHALLENGE
               </button>
             </div>
           ) : (
-            <button 
+            <button
               type="button"
               onClick={handleNewChallenge}
-              className="w-full md:w-auto px-12 py-6 bg-primary text-on-primary font-label text-xs tracking-[0.2em] uppercase hover:bg-zinc-800 active:scale-95 transition-all duration-300 shadow-none border-0"
+              className="w-full min-h-[48px] md:w-auto px-12 py-5 bg-primary text-on-primary font-work-sans text-[10px] tracking-[0.2em] uppercase transition-all active:opacity-80"
             >
               START CHALLENGE
             </button>
           )}
         </div>
-
       </section>
     </main>
   );

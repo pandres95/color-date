@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400&family=Work+Sans:wght@300;400;500;600&family=Inter:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400&family=Work+Sans:wght@300;400;500;600&family=Inter:wght@400;500&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
 
 @tailwind base;
@@ -10,15 +10,37 @@
     background-color: #FAFAFA;
     color: #1A1A1A;
     font-family: 'Inter', sans-serif;
-    min-height: max(884px, 100dvh);
+    margin: 0;
+    padding: 0;
   }
 }
 
 .material-symbols-outlined {
-    font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+/* PWA Touch Optimizations */
+* {
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+/* Ensure inputs or specific areas are selectable if needed */
+input, textarea, .selectable {
+    user-select: auto;
+    -webkit-user-select: auto;
 }
 
 /* Custom scrollbar for editorial feel */
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-track { background: #FAFAFA; }
 ::-webkit-scrollbar-thumb { background: #1A1A1A; }
+
+/* Dynamic viewport heights for PWA */
+.h-svh-70 { height: 70svh; }
+.h-svh-30 { height: 30svh; }
+
+/* Safe area handling */
+.pb-safe { padding-bottom: env(safe-area-inset-bottom); }
+.pt-safe { padding-top: env(safe-area-inset-top); }

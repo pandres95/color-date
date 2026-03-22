@@ -1,20 +1,33 @@
-export function StepLayoutSize({ setGridSize, onNext }: { setGridSize: (size: 2|3) => void, onNext: () => void }) {
+export function StepLayoutSize({
+  setGridSize,
+  onNext,
+}: {
+  setGridSize: (size: number) => void;
+  onNext: () => void;
+}) {
   return (
-    <main className="min-[100dvh] flex flex-col bg-background text-on-background animate-fade-in overflow-x-hidden">
+    <main className="min-h-[100svh] flex flex-col pt-safe pb-safe">
+      {/* VIEW 2: LAYOUT SELECTION — exact Stitch markup */}
       <section className="flex-1 flex flex-col p-8 md:p-20">
-        <div className="mb-16 pt-8 md:pt-0">
-          <p className="font-label text-xs tracking-[0.2em] uppercase text-outline-variant mb-4">Step 01</p>
-          <h2 className="font-headline text-4xl">Select your layout</h2>
+        <div className="mb-16">
+          <p className="font-work-sans text-[10px] tracking-[0.2em] uppercase text-gray-400 mb-4">Step 01</p>
+          <h2 className="font-noto-serif text-4xl">Select your layout</h2>
         </div>
-        <div className="flex flex-col border-t border-outline-variant/30 w-full outline-none">
-          <button type="button" onClick={() => { setGridSize(2); onNext(); }} className="group py-12 flex justify-between items-center border-b border-x-0 border-t-0 border-outline-variant/30 bg-transparent hover:bg-surface-container-low active:bg-surface-container-low transition-colors px-4 relative outline-none cursor-pointer">
-            <span className="font-headline text-3xl">2x2</span>
-            <span className="material-symbols-outlined opacity-50 group-hover:opacity-100 transition-opacity">arrow_forward</span>
-          </button>
-          <button type="button" onClick={() => { setGridSize(3); onNext(); }} className="group py-12 flex justify-between items-center border-b border-x-0 border-t-0 border-outline-variant/30 bg-transparent hover:bg-surface-container-low active:bg-surface-container-low transition-colors px-4 relative outline-none cursor-pointer">
-            <span className="font-headline text-3xl">3x3</span>
-            <span className="material-symbols-outlined opacity-50 group-hover:opacity-100 transition-opacity">arrow_forward</span>
-          </button>
+        <div className="flex flex-col">
+          {(['2x2', '3x3', '4x4'] as const).map((size) => (
+            <button
+              key={size}
+              type="button"
+              onClick={() => {
+                setGridSize(Number.parseInt(size[0]));
+                onNext();
+              }}
+              className="group min-h-[80px] py-8 flex justify-between items-center bg-surface-container-low mb-1 px-6 transition-all active:bg-surface-container-highest"
+            >
+              <span className="font-noto-serif text-3xl">{size}</span>
+              <span className="material-symbols-outlined opacity-30 group-active:opacity-100 transition-opacity">arrow_forward</span>
+            </button>
+          ))}
         </div>
       </section>
     </main>
